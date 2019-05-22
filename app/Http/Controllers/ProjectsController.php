@@ -8,13 +8,18 @@ use App\Project;
 
 class ProjectsController extends Controller
 {
+    public function __construct(){
+        $this->middleware('auth');
+    }
+
     public function index(){
-        // $projects = Project::all();
-        $projects = Project::where('owner_id', auth()->id())->get();
+        $projects = Project::where('author_id', auth()->id())->get();
         return view('projects.index', compact('projects'));
     }
 
     public function show(Project $project){
+        $this->authorize('owns', $project);
+        // abort_unless(\Gate::allows('owns', $project), 403);
         return view('projects.show', compact('project'));
     }
 
@@ -41,6 +46,8 @@ class ProjectsController extends Controller
             'title' => ['required', 'min:3'],
             'description' => ['required', 'min:3']
         ]);
+
+        $attributes['author_id'] = auth()->id();
 
         Project::create($attributes);
 
