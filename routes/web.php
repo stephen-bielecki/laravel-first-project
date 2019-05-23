@@ -17,8 +17,6 @@ app()->singleton('example', function(){
 });
 
 Route::get('/', function () {
-    dd(app('example'), app('example'));
-
     return view('welcome');
 });
 
